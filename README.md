@@ -18,4 +18,4 @@ The main script (`main.py`) serves to execute these models on the dataset and ev
 
 ## Conclusion
 
-This project demonstrates the application of various machine learning techniques to a real-world dataset. The results and findings are detailed in the accompanying project report (report.pdf).
+This project demonstrates the application of various machine learning techniques to a real-world dataset. The results and findings are detailed in the accompanying project report (ML report.pdf).
