@@ -4,23 +4,17 @@ import torch.nn.functional as F
 from torch.utils.data import TensorDataset, DataLoader
 
 from ..utils import accuracy_fn, onehot_to_label
-## MS2
 
 
 class MLP(nn.Module):
     """
-    An MLP network which does classification.
-
-    It should not use any convolutional layers.
+    A multi-layer perceptron with two hidden ReLU layers.
     """
 
     def __init__(self, input_size, n_classes, high_capacity = 256, low_capacity = 128):
         """
         Initialize the network.
-        
-        You can add arguments if you want, but WITH a default value, e.g.:
-            __init__(self, input_size, n_classes, my_arg=32)
-        
+
         Arguments:
             input_size (int): size of the input
             n_classes (int): number of classes to predict
@@ -48,28 +42,18 @@ class MLP(nn.Module):
 
 class CNN(nn.Module):
     """
-    A CNN which does classification.
-
-    It should use at least one convolutional layer.
+    A CNN with three convolutional layers (each followed by max pooling) and two fully connected layers.
     """
 
     def __init__(self, input_channels, n_classes, filters = (16, 32, 64)):
         """
         Initialize the network.
-        
-        You can add arguments if you want, but WITH a default value, e.g.:
-            __init__(self, input_channels, n_classes, my_arg=32)
-        
+
         Arguments:
             input_channels (int): number of channels in the input
             n_classes (int): number of classes to predict
         """
         super().__init__()
-        """self.conv2d1 = nn.Conv2d(input_channels, 6, 3, padding=1)
-        self.conv2d2 = nn.Conv2d(6, 16, 3, padding=1)
-        self.fc1 = nn.Linear(784, 120)  # 7 * 7 * 16, 120
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, n_classes)"""
         self.conv2d1 = nn.Conv2d(input_channels, filters[0], 3, padding=1)
         self.conv2d2 = nn.Conv2d(filters[0], filters[1], 4, padding=1)
         self.conv2d3 = nn.Conv2d(filters[1], filters[2], 4, padding=1)
@@ -86,16 +70,6 @@ class CNN(nn.Module):
             preds (tensor): logits of predictions of shape (N, C)
                 Reminder: logits are value pre-softmax.
         """
-        """preds = x
-        preds = F.relu(self.conv2d1(preds))
-        preds = F.max_pool2d(preds, 2)
-        preds = F.relu(self.conv2d2(preds))
-        preds = F.max_pool2d(preds, 2)
-        preds = preds.flatten(-3)
-        preds = F.relu(self.fc1(preds))
-        preds = F.relu(self.fc2(preds))
-        preds = self.fc3(preds)"""
-
         preds = x
         preds = F.relu(self.conv2d1(preds))
         preds = F.max_pool2d(preds, 2)
@@ -213,7 +187,7 @@ class MyViT(nn.Module):
         # 4) Transformer encoder blocks
         self.blocks = nn.ModuleList([MyViTBlock(hidden_d, n_heads) for _ in range(n_blocks)])
         
-        # 5) Classification MLPk
+        # 5) Classification MLP
         self.mlp = nn.Sequential(
             nn.Linear(self.hidden_d, out_d),
             nn.Softmax(dim=-1)
@@ -267,14 +241,11 @@ class Trainer(object):
         self.batch_size = batch_size
 
         self.criterion = nn.CrossEntropyLoss()
-        self.optimizer = torch.optim.Adam(self.model.parameters(), self.lr) #torch.optim.SGD(self.model.parameters(), self.lr)#...  ### WRITE YOUR CODE HERE
+        self.optimizer = torch.optim.Adam(self.model.parameters(), self.lr)
 
     def train_all(self, dataloader):
         """
-        Fully train the model over the epochs. 
-        
-        In each epoch, it calls the functions "train_one_epoch". If you want to
-        add something else at each epoch, you can do it here.
+        Fully train the model over the epochs.
 
         Arguments:
             dataloader (DataLoader): dataloader for training data
@@ -282,14 +253,9 @@ class Trainer(object):
         for ep in range(self.epochs):
             self.train_one_epoch(dataloader, ep)
 
-            ### WRITE YOUR CODE HERE if you want to do add something else at each epoch
-
     def train_one_epoch(self, dataloader, ep):
         """
-        Train the model for ONE epoch.
-
-        Should loop over the batches in the dataloader. (Recall the exercise session!)
-        Don't forget to set your model to training mode, i.e., self.model.train()!
+        Train the model for one epoch.
 
         Arguments:
             dataloader (DataLoader): dataloader for training data
@@ -321,13 +287,6 @@ class Trainer(object):
     def predict_torch(self, dataloader):
         """
         Predict the validation/test dataloader labels using the model.
-
-        Hints:
-            1. Don't forget to set your model to eval mode, i.e., self.model.eval()!
-            2. You can use torch.no_grad() to turn off gradient computation, 
-            which can save memory and speed up computation. Simply write:
-                with torch.no_grad():
-                    # Write your code here.
 
         Arguments:
             dataloader (DataLoader): dataloader for validation/test data

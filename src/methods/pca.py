@@ -1,19 +1,14 @@
 import numpy as np
 
-## MS2
 
 class PCA(object):
     """
-    PCA dimensionality reduction class.
-    
-    Feel free to add more functions to this class if you need,
-    but make sure that __init__(), find_principal_components(), and reduce_dimension() work correctly.
+    PCA dimensionality reduction, computed from the eigendecomposition of the covariance matrix.
     """
 
     def __init__(self, d):
         """
-        Initialize the new object (see dummy_methods.py)
-        and set its arguments.
+        Initialize the PCA object.
 
         Arguments:
             d (int): dimensionality of the reduced space
@@ -51,12 +46,6 @@ class PCA(object):
         variance_totale = np.sum(e_values)
 
         exvar = (np.sum(e_values[i_decroissant_ordre[:self.d]]) / variance_totale * 100)
-
-        ##
-        ###
-        #### WRITE YOUR CODE HERE!
-        ###
-        ##
         return exvar
 
     def reduce_dimension(self, data):
@@ -70,13 +59,7 @@ class PCA(object):
         """
 
         le_data_centre_autour_de_origine = data - self.mean
-        data_reduced = np.dot(le_data_centre_autour_de_origine, self.W) #to reduce to d dimension
-
-        ##
-        ###
-        #### WRITE YOUR CODE HERE!
-        ###
-        ##
+        data_reduced = np.dot(le_data_centre_autour_de_origine, self.W)  # project onto the d principal components
         return data_reduced
         
 
